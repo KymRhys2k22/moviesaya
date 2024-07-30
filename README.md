@@ -283,13 +283,12 @@ Provides a search input for finding movies by title.
 <SearchBar onSearch={handleSearch} />
 ```
 
-## Navigation
 
-Moviesaya uses [React Navigation](https://reactnavigation.org/) for handling app navigation.
+---
 
-### AppNavigator
+## Navigation (continued)
 
-Defines the main navigation structure of the app.
+### AppNavigator (continued)
 
 **File:** `src/navigation/AppNavigator.js`
 
@@ -302,12 +301,182 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import TopRatedScreen from '../screens/TopRatedScreen';
 import MovieDetailScreen from '../screens/MovieDetailScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => (
   <NavigationContainer>
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="TopRated" component={TopRatedScreen} />
-      <Stack.Screen name="MovieDetail" component={MovieDetail
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ title: 'Moviesaya' }}
+      />
+      <Stack.Screen 
+        name="TopRated" 
+        component={TopRatedScreen} 
+        options={{ title: 'Top Rated Movies' }}
+      />
+      <Stack.Screen 
+        name="MovieDetail" 
+        component={MovieDetailScreen} 
+        options={({ route }) => ({ title: route.params.movieTitle })}
+      />
+      <Stack.Screen 
+        name="Search" 
+        component={SearchScreen} 
+        options={{ title: 'Search Movies' }}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
+
+export default AppNavigator;
+```
+
+### Screens Description
+
+1. **HomeScreen**
+   - Displays a list of popular movies.
+   - Allows navigation to `MovieDetailScreen` for detailed movie information.
+
+2. **TopRatedScreen**
+   - Lists top-rated movies.
+   - Navigation to `MovieDetailScreen` is available for detailed views.
+
+3. **MovieDetailScreen**
+   - Shows detailed information about a selected movie, including IMDB rating.
+   - Accessed from both Home and Top Rated screens.
+
+4. **SearchScreen**
+   - Provides search functionality to find movies by name.
+   - Displays search results in a list format.
+
+## Error Handling
+
+Handling errors effectively is crucial for a smooth user experience. Here’s how Moviesaya manages errors:
+
+### Common Error Types
+
+1. **Network Errors**
+   - Occurs when there is no internet connection or the TMDb API server is unreachable.
+   - **Solution**: Display a user-friendly message indicating connectivity issues.
+
+2. **API Errors**
+   - Includes invalid API keys, rate limiting, or incorrect endpoint usage.
+   - **Solution**: Handle different status codes and show appropriate messages.
+
+3. **Data Errors**
+   - Occurs if API responses have unexpected data formats or missing fields.
+   - **Solution**: Use default values or error boundaries to prevent app crashes.
+
+### Error Handling Example
+
+Here’s how you can handle errors while fetching movie data:
+
+```javascript
+const fetchMovies = async (endpoint) => {
+  try {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    alert('An error occurred while fetching movie data. Please try again later.');
+    return [];
+  }
+};
+```
+
+### Displaying Error Messages
+
+Utilize components or hooks to display errors:
+
+```javascript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+const ErrorComponent = ({ message }) => (
+  <View style={styles.errorContainer}>
+    <Text style={styles.errorText}>{message}</Text>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
+});
+
+export default ErrorComponent;
+```
+
+Use this component within screens to handle and display errors.
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+1. **App Not Starting**
+   - **Issue**: Errors during the app startup.
+   - **Solution**: Ensure dependencies are installed with `npm install` or `yarn install`, and check for any syntax errors in the code.
+
+2. **API Key Invalid**
+   - **Issue**: Incorrect or expired TMDb API key.
+   - **Solution**: Verify the API key in the `.env` file and ensure it is correctly applied within the app.
+
+3. **Blank Screen**
+   - **Issue**: UI not rendering due to errors.
+   - **Solution**: Check the console for errors and inspect component render logic.
+
+4. **Slow Performance**
+   - **Issue**: App running slowly on devices.
+   - **Solution**: Optimize images, reduce API calls, and use tools like [React Native Debugger](https://github.com/jhen0409/react-native-debugger) for performance profiling.
+
+### Debugging Tips
+
+- **Console Logs**: Use `console.log` to debug values and application flow.
+- **React Native Debugger**: A powerful tool to debug and optimize React Native apps.
+- **Emulator Logs**: Check logs from Android Studio or Xcode for native errors.
+
+## Contributing
+
+We welcome contributions from the community! Follow these steps to contribute:
+
+1. Fork the repository on GitHub.
+2. Create a new branch for your feature or bugfix.
+3. Implement your changes and commit them with descriptive messages.
+4. Push your changes to your forked repository.
+5. Open a pull request against the main repository.
+
+### Code Style Guidelines
+
+- **JavaScript Standard Style**: Adhere to the standard coding style for JavaScript.
+- **Component Reusability**: Design components to be reusable and maintainable.
+- **Commenting**: Add comments to explain complex logic or algorithms.
+
+## License
+
+Moviesaya is licensed under the MIT License. You are free to use, modify, and distribute this software following the license terms.
+
+---
+
+## Contact Information
+
+For further assistance or inquiries, please contact me
+
+- **Email**: kymrhys@gmail.com
+- **GitHub**: [Moviesaya GitHub Repo](https://github.com/kymrhys2k22/moviesaya)
+
+
+---
